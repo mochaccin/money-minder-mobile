@@ -7,26 +7,25 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { ChevronLeft } from "lucide-react-native";
+import { addCard, addCardToUser } from "../../services/api";
 
 export default function AddCardScreen() {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
   const [cardData, setCardData] = useState({
     card_name: "",
+    owner: "6752261b020cfec6c361f005",
     card_type: true,
     card_number: "",
     card_expiration_date: "",
     card_cvv: "",
   });
 
-  const handleSubmit = () => {
-    console.log("Card Data:", cardData);
-    router.back();
-  };
-
-  const handleAddCard = () => {
+  const handleAddCard = async () => {
     if (
       !cardData.card_name ||
       !cardData.card_number ||
@@ -37,9 +36,19 @@ export default function AddCardScreen() {
       return;
     }
 
-    console.log("New card:", cardData);
-    Alert.alert("Success", "Card added successfully");
-    router.back();
+    setLoading(true);
+    try {
+      const newCard = await addCard(cardData);
+      console.log("New card:", newCard);
+      Alert.alert("Success", "Card added successfully", [
+        { text: "OK", onPress: () => router.back() },
+      ]);
+    } catch (error) {
+      console.error("Error adding card:", error);
+      Alert.alert("Error", "Failed to add card. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -178,10 +187,15 @@ export default function AddCardScreen() {
         <TouchableOpacity
           className="bg-violet-500 rounded-xl py-4 px-8 my-6"
           onPress={handleAddCard}
+          disabled={loading}
         >
-          <Text className="text-white font-semibold text-center text-lg">
-            Add Card
-          </Text>
+          {loading ? (
+            <ActivityIndicator color="#ffffff" />
+          ) : (
+            <Text className="text-white font-semibold text-center text-lg">
+              Add Card
+            </Text>
+          )}
         </TouchableOpacity>
       </ScrollView>
     </View>

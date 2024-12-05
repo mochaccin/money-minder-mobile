@@ -9,7 +9,7 @@ import {
   List,
   Trash,
 } from "lucide-react-native";
-import { mockCards, Spend } from "../../mocks/data";
+import { mockCards, MockSpend } from "../../models/data";
 
 const spendCategories = [
   { name: "Food", color: "#FF6384" },
@@ -149,7 +149,7 @@ export default function CardDetailsScreen() {
       <Text className="text-white text-xl mb-4">Recent Transactions</Text>
       <View className="bg-zinc-800 rounded-xl p-4 mb-6">
         {hasSpends ? (
-          card.spends.slice(0, 5).map((spend: Spend, index: number) => (
+          card.spends.slice(0, 5).map((spend: MockSpend, index: number) => (
             <View
               key={index}
               className="flex-row justify-between items-center py-2 border-b border-zinc-700"

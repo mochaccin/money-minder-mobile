@@ -10,7 +10,7 @@ import {
 import { CreditCard, DollarSign } from "lucide-react-native";
 import { useRouter } from "expo-router";
 import { Picker } from "@react-native-picker/picker";
-import { mockCards, Card, Spend } from "../../mocks/data";
+import { mockCards, Card, Spend } from "../../models/data";
 
 const categories = [
   "Home Bills",

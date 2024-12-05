@@ -1,4 +1,33 @@
+export interface User {
+  name: string;
+  password: string;
+  cards?: string[];
+  spends?: string[];
+}
+
 export interface Spend {
+  id?: string;  
+  name: string;
+  date: string;
+  category: string;
+  amount: number; 
+  owner: string; 
+  paymentCard: string;  
+}
+
+export interface Card {
+  id?: string;
+  owner: string;
+  cardName: string;
+  cardType: boolean;
+  cardNumber: string;
+  cardExpirationDate: string;
+  cardCVV: string;
+  spends?: string[];
+}
+
+
+export interface MockSpend {
   name: string;
   date: string;
   category: string;
@@ -11,7 +40,7 @@ export interface Spend {
   };
 }
 
-export interface Card {
+export interface MockCard {
   _id: {
     $oid: string;
   };
@@ -23,10 +52,10 @@ export interface Card {
   card_number: string;
   card_expiration_date: string;
   card_cvv: string;
-  spends: Spend[];
+  spends: MockSpend[];
 }
 
-export const mockCards: Card[] = [
+export const mockCards: MockCard[] = [
   {
     _id: { $oid: "673a6dc7b51c964eefdbe538" },
     owner: { $oid: "66b6f687ba562c138887ac1c" },

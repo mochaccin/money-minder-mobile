@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { ChevronLeft } from "lucide-react-native";
-import { mockCards } from "../../mocks/data";
+import { mockCards } from "../../models/data";
 
 interface Transaction {
   id: string;

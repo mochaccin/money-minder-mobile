@@ -1,14 +1,63 @@
-import React from "react";
-import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import { ChevronRight } from "lucide-react-native";
 import { useRouter } from "expo-router";
-import { mockCards } from "../../mocks/data";
+import { Card } from "../../models/data";
+import { fetchCards } from "../../services/api";
 
-export default function CardsScreen() {
+export default function CardsScreen(): JSX.Element {
   const router = useRouter();
-  const hasCards = mockCards.length > 0;
+  const [cards, setCards] = useState<Card[] | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  if (!hasCards) {
+  useEffect(() => {
+    loadCards();
+  }, []);
+
+  const loadCards = async () => {
+    try {
+      setLoading(true);
+      const fetchedCards = await fetchCards();
+      setCards(fetchedCards);
+      setError(null);
+    } catch (err) {
+      setError("Failed to load cards. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <View className="flex-1 bg-[#111111] justify-center items-center">
+        <ActivityIndicator size="large" color="#A78BFA" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View className="flex-1 bg-[#111111] justify-center items-center px-4">
+        <Text className="text-white text-lg text-center mb-4">{error}</Text>
+        <TouchableOpacity
+          className="bg-violet-500 rounded-xl py-4 px-8"
+          onPress={loadCards}
+        >
+          <Text className="text-white font-semibold text-lg">Try Again</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  if (!cards || cards.length === 0) {
     return (
       <View className="flex-1 bg-[#111111] px-4">
         <View className="flex-row justify-between items-center py-4">
@@ -56,11 +105,11 @@ export default function CardsScreen() {
 
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         <View className="space-y-3 gap-4">
-          {mockCards.map((card) => (
+          {cards.map((card) => (
             <TouchableOpacity
-              key={card._id.$oid}
+              key={card.id}
               className="flex-row items-center justify-between bg-zinc-800 p-4 rounded-xl"
-              onPress={() => router.push(`/card-details?id=${card._id.$oid}`)}
+              onPress={() => router.push(`/card-details?id=${card.id}`)}
             >
               <View className="flex-row items-center space-x-3 gap-4">
                 <Text className="text-violet-400 text-lg">Tarjeta ******</Text>
