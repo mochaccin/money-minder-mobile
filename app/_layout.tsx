@@ -15,6 +15,7 @@ export default function RootLayout() {
           <Stack.Screen name="(screens)/cards" options={{ headerShown: false }} />
           <Stack.Screen name="(screens)/stats" options={{ headerShown: false }} />
           <Stack.Screen name="(screens)/add-spend" options={{ headerShown: false }} />
+          <Stack.Screen name="(screens)/card-details" options={{ headerShown: false }} />
         </Stack>
       </View>
       <BottomNav />
