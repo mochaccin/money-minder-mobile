@@ -1,12 +1,19 @@
-import React from 'react'
-import { View, Text, Image, Pressable, ScrollView } from 'react-native'
-import { ChevronRight } from 'lucide-react-native'
-import { useRouter } from 'expo-router'
-import { mockCards } from '../../mocks/data'
+import React from "react";
+import {
+  View,
+  Text,
+  Image,
+  Pressable,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
+import { ChevronRight } from "lucide-react-native";
+import { useRouter } from "expo-router";
+import { mockCards } from "../../mocks/data";
 
 export default function CardsScreen() {
-  const router = useRouter()
-  const hasCards = mockCards.length > 0
+  const router = useRouter();
+  const hasCards = mockCards.length > 0;
 
   if (!hasCards) {
     return (
@@ -20,8 +27,8 @@ export default function CardsScreen() {
 
         <View className="flex-1 items-center justify-center -mt-20">
           <Image
-            source={{ 
-              uri: "https://preview.redd.it/i-made-steamhappy-vector-image-v0-jmmqmwzwk14c1.png?width=800&format=png&auto=webp&s=7cc8498450fbd323b22899722ac24cbd23a91a83" 
+            source={{
+              uri: "https://preview.redd.it/i-made-steamhappy-vector-image-v0-jmmqmwzwk14c1.png?width=800&format=png&auto=webp&s=7cc8498450fbd323b22899722ac24cbd23a91a83",
             }}
             className="w-60 h-60"
             resizeMode="contain"
@@ -32,17 +39,17 @@ export default function CardsScreen() {
           <Text className="text-gray-400 text-center mb-8 px-6">
             Experience the power of financial organization with our application.
           </Text>
-          <Pressable
+          <TouchableOpacity
             className="bg-violet-500 rounded-xl py-4 px-8"
-            onPress={() => console.log('Add card')}
+            onPress={() => router.push("/add-card")}
           >
             <Text className="text-white font-semibold text-lg flex-row items-center">
               + Add another card
             </Text>
-          </Pressable>
+          </TouchableOpacity>
         </View>
       </View>
-    )
+    );
   }
 
   return (
@@ -57,7 +64,7 @@ export default function CardsScreen() {
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         <View className="space-y-3 gap-4">
           {mockCards.map((card) => (
-            <Pressable
+            <TouchableOpacity
               key={card._id.$oid}
               className="flex-row items-center justify-between bg-zinc-800 p-4 rounded-xl"
               onPress={() => router.push(`/card-details?id=${card._id.$oid}`)}
@@ -65,9 +72,10 @@ export default function CardsScreen() {
               <View className="flex-row items-center space-x-3 gap-4">
                 <Text className="text-violet-400 text-lg">Tarjeta ******</Text>
                 <Image
-                  source={card.card_type ? 
-                    require('../../assets/images/mastercard.png') : 
-                    require('../../assets/images/visa.png')
+                  source={
+                    card.card_type
+                      ? require("../../assets/images/mastercard.png")
+                      : require("../../assets/images/visa.png")
                   }
                   className="w-10 h-10"
                   resizeMode="contain"
@@ -79,20 +87,19 @@ export default function CardsScreen() {
                 </Text>
                 <ChevronRight size={22} color="#A78BFA" />
               </View>
-            </Pressable>
+            </TouchableOpacity>
           ))}
         </View>
 
-        <Pressable
+        <TouchableOpacity
           className="bg-violet-500 rounded-xl py-4 px-8 my-6"
-          onPress={() => console.log('Add new card')}
+          onPress={() => router.push("/add-card")}
         >
           <Text className="text-white font-semibold text-center text-lg">
             Add new card
           </Text>
-        </Pressable>
+        </TouchableOpacity>
       </ScrollView>
     </View>
-  )
+  );
 }
-

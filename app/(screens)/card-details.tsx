@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, ScrollView, Pressable, Image } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { PieChart } from "react-native-chart-kit";
 import {
@@ -7,6 +7,7 @@ import {
   CreditCard,
   PieChart as PieChartIcon,
   List,
+  Trash,
 } from "lucide-react-native";
 import { mockCards, Spend } from "../../mocks/data";
 
@@ -38,6 +39,10 @@ export default function CardDetailsScreen() {
   const hasSpends = card.spends.length > 0;
   const totalSpend = card.spends.reduce((sum, spend) => sum + spend.amount, 0);
 
+  const handleDelete = () => {
+    console.log("Delete button pressed");
+  };
+
   const pieData = hasSpends
     ? spendCategories.map((category) => {
         const categorySpends = card.spends.filter(
@@ -68,18 +73,24 @@ export default function CardDetailsScreen() {
   return (
     <ScrollView className="flex-1 bg-zinc-900 px-4">
       <View className="flex-row items-center py-4">
-        <Pressable onPress={() => router.back()}>
+        <TouchableOpacity onPress={() => router.back()}>
           <ChevronLeft size={24} color="white" />
-        </Pressable>
+        </TouchableOpacity>
         <Text className="text-white text-2xl font-semibold ml-4">
           Card Details
         </Text>
       </View>
 
       <View className="bg-zinc-800 rounded-xl p-4 mb-6">
-        <View className="flex-row gap-2">
-          <Text className="text-white text-xl">{card.card_name}</Text>
-          <CreditCard size={24} color="#fff" />
+        <View className="flex-row justify-between items-center mb-4">
+          <View className="flex-row gap-2">
+            <Text className="text-white text-xl">{card.card_name}</Text>
+            <CreditCard size={24} color="#fff" />
+          </View>
+
+          <TouchableOpacity onPress={handleDelete}>
+            <Trash size={24} color="white" />
+          </TouchableOpacity>
         </View>
 
         <Text className="text-gray-400 text-lg">{card.card_number}</Text>

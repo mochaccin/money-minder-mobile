@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { View, Text, ScrollView, Pressable, Dimensions } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  Dimensions,
+  TouchableOpacity,
+} from "react-native";
 import { Eye, CreditCard } from "lucide-react-native";
 import { PieChart } from "react-native-chart-kit";
 
@@ -44,7 +50,6 @@ export default function HomeScreen() {
 
   return (
     <ScrollView className="flex-1 bg-zinc-900">
-      {/* Header */}
       <View className="flex-row justify-between items-center p-4">
         <Text className="text-white text-2xl font-semibold">
           Welcome, Nicolas
@@ -54,7 +59,6 @@ export default function HomeScreen() {
         </View>
       </View>
 
-      {/* Transaction Overview Card */}
       <View className="mx-4 bg-zinc-800 rounded-xl p-4 mb-4">
         <View className="flex-row items-center space-x-2 mb-4 gap-2">
           <Text className="text-white text-3xl font-bold">$ {balance}</Text>
@@ -77,12 +81,11 @@ export default function HomeScreen() {
             </View>
           ))}
         </View>
-        <Pressable className="mt-3">
+        <TouchableOpacity className="mt-3">
           <Text className="text-violet-400 text-center">See all</Text>
-        </Pressable>
+        </TouchableOpacity>
       </View>
 
-      {/* Balance Cards */}
       <View className="flex-row mx-4 space-x-4 mb-6 gap-4">
         <View className="flex-1 bg-red-400 p-4 rounded-xl">
           <View className="flex-row items-center space-x-2 mb-1 gap-2">
@@ -104,7 +107,6 @@ export default function HomeScreen() {
         </View>
       </View>
 
-      {/* Weekly Spend Section */}
       <View className="mx-4 mb-6">
         <View className="flex-row justify-between items-center mb-4">
           <Text className="text-white text-xl">Weekly spend</Text>
@@ -134,7 +136,6 @@ export default function HomeScreen() {
             hasLegend={false}
           />
 
-          {/* Custom Legend */}
           <View className="mt-4 space-y-2 gap-2">
             {pieData.map((item, index) => (
               <View

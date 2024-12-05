@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, ScrollView, Pressable } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { ChevronDown, ChevronRight, CreditCard } from "lucide-react-native";
 import { PieChart } from "react-native-chart-kit";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -39,7 +39,6 @@ export default function StatsScreen() {
 
   return (
     <ScrollView className="flex-1 bg-zinc-900 px-4">
-      {/* Header */}
       <View className="flex-row justify-between items-center py-4">
         <Text className="text-white text-2xl font-semibold">Stats</Text>
         <View className="w-8 h-8 rounded-full bg-violet-500 items-center justify-center">
@@ -47,8 +46,7 @@ export default function StatsScreen() {
         </View>
       </View>
 
-      {/* Month Selector */}
-      <Pressable
+      <TouchableOpacity
         onPress={() => setShowPicker(true)}
         className="flex-row items-center justify-center space-x-2 mb-4"
       >
@@ -56,7 +54,7 @@ export default function StatsScreen() {
           {date.toLocaleString("default", { month: "long", year: "numeric" })}
         </Text>
         <ChevronDown size={20} color="white" />
-      </Pressable>
+      </TouchableOpacity>
 
       {showPicker && (
         <DateTimePicker
@@ -67,7 +65,6 @@ export default function StatsScreen() {
         />
       )}
 
-      {/* Balance Cards */}
       <View className="flex-row space-x-4 mb-6 gap-4">
         <View className="flex-1 bg-red-400 p-4 rounded-xl">
           <View className="flex-row items-center space-x-2 mb-1 gap-2">
@@ -123,9 +120,8 @@ export default function StatsScreen() {
         </View>
       </View>
 
-      {/* Transaction Groups */}
       {transactionGroups.map((group) => (
-        <Pressable
+        <TouchableOpacity
           key={group.id}
           className="bg-zinc-800 rounded-xl p-4 mb-3 flex-row items-center"
           onPress={() =>
@@ -150,7 +146,7 @@ export default function StatsScreen() {
             <Text className="text-white font-medium">${group.amount}</Text>
             <ChevronRight size={20} color="white" />
           </View>
-        </Pressable>
+        </TouchableOpacity>
       ))}
     </ScrollView>
   );

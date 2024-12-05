@@ -1,65 +1,74 @@
-import React, { useState } from 'react'
-import { View, Text, TextInput, Pressable, ScrollView, Alert } from 'react-native'
-import { CreditCard, DollarSign, ChevronDown } from 'lucide-react-native'
-import { useRouter } from 'expo-router'
-import { Picker } from '@react-native-picker/picker'
-import { mockCards, Card, Spend } from '../../mocks/data'
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  ScrollView,
+  Alert,
+  TouchableOpacity,
+} from "react-native";
+import { CreditCard, DollarSign } from "lucide-react-native";
+import { useRouter } from "expo-router";
+import { Picker } from "@react-native-picker/picker";
+import { mockCards, Card, Spend } from "../../mocks/data";
 
 const categories = [
-  'Home Bills',
-  'Food',
-  'Games',
-  'Transportation',
-  'Entertainment',
-  'Shopping',
-  'Healthcare',
-  'Education'
-]
+  "Home Bills",
+  "Food",
+  "Games",
+  "Transportation",
+  "Entertainment",
+  "Shopping",
+  "Healthcare",
+  "Education",
+];
 
 export default function AddSpendScreen() {
-  const router = useRouter()
-  const [name, setName] = useState('')
-  const [amount, setAmount] = useState('')
-  const [selectedCard, setSelectedCard] = useState<Card | null>(null)
-  const [category, setCategory] = useState(categories[0])
+  const router = useRouter();
+  const [name, setName] = useState("");
+  const [amount, setAmount] = useState("");
+  const [selectedCard, setSelectedCard] = useState<Card | null>(null);
+  const [category, setCategory] = useState(categories[0]);
 
   const formatAmount = (value: string) => {
-    const numeric = value.replace(/[^0-9]/g, '')
-    const formatted = new Intl.NumberFormat('es-CL', {
-      style: 'currency',
-      currency: 'CLP'
-    }).format(Number(numeric))
-    return formatted
-  }
+    const numeric = value.replace(/[^0-9]/g, "");
+    const formatted = new Intl.NumberFormat("es-CL", {
+      style: "currency",
+      currency: "CLP",
+    }).format(Number(numeric));
+    return formatted;
+  };
 
   const handleAmountChange = (value: string) => {
-    setAmount(value.replace(/[^0-9]/g, ''))
-  }
+    setAmount(value.replace(/[^0-9]/g, ""));
+  };
 
   const handleAddSpend = () => {
     if (!name || !amount || !selectedCard) {
-      Alert.alert('Error', 'Please fill in all fields')
-      return
+      Alert.alert("Error", "Please fill in all fields");
+      return;
     }
 
     const newSpend: Spend = {
       name,
-      date: new Date().toLocaleDateString('es-CL'),
+      date: new Date().toLocaleDateString("es-CL"),
       category,
       amount: Number(amount),
-      owner: { $oid: "66b6f687ba562c138887ac1c" }, // Hardcoded for this example
-      payment_card: selectedCard._id
-    }
+      owner: { $oid: "66b6f687ba562c138887ac1c" },
+      payment_card: selectedCard._id,
+    };
 
-    console.log('New spend:', newSpend)
-    Alert.alert('Success', 'Spend added successfully')
-    router.back() // Navigate back after adding the spend
-  }
+    console.log("New spend:", newSpend);
+    Alert.alert("Success", "Spend added successfully");
+    router.back();
+  };
 
   return (
     <View className="flex-1 bg-[#111111]">
       <View className="flex-row justify-between items-center p-4 mb-6">
-        <Text className="text-white text-xl font-semibold">Add a new spend</Text>
+        <Text className="text-white text-xl font-semibold">
+          Add a new spend
+        </Text>
         <View className="w-8 h-8 rounded-full bg-violet-500 items-center justify-center">
           <Text className="text-white text-sm font-medium">N</Text>
         </View>
@@ -100,7 +109,7 @@ export default function AddSpendScreen() {
             <Picker
               selectedValue={category}
               onValueChange={(itemValue) => setCategory(itemValue)}
-              style={{ color: 'white' }}
+              style={{ color: "white" }}
               dropdownIconColor="white"
             >
               {categories.map((cat) => (
@@ -112,40 +121,47 @@ export default function AddSpendScreen() {
 
         <View className="space-y-4 flex flex-col gap-4">
           {mockCards.map((card) => (
-            <Pressable
+            <TouchableOpacity
               key={card._id.$oid}
               className={`flex-row items-center justify-between p-4 rounded-lg ${
-                selectedCard?._id.$oid === card._id.$oid ? 'bg-violet-500/20' : 'bg-zinc-800'
+                selectedCard?._id.$oid === card._id.$oid
+                  ? "bg-violet-500/20"
+                  : "bg-zinc-800"
               }`}
               onPress={() => setSelectedCard(card)}
             >
               <View className="flex-row items-center">
                 <Text className="text-violet-400 mr-2">{card.card_name}</Text>
-                <CreditCard 
-                  size={20} 
-                  color={card.card_type ? '#fff' : '#fff'} 
+                <CreditCard
+                  size={20}
+                  color={card.card_type ? "#fff" : "#fff"}
                 />
               </View>
               <View className="flex-row items-center">
                 <Text className="text-white mr-4">
                   **** **** **** {card.card_number.slice(-4)}
                 </Text>
-                <View className={`w-5 h-5 rounded-full border-2 border-violet-400 ${
-                  selectedCard?._id.$oid === card._id.$oid ? 'bg-violet-400' : 'bg-transparent'
-                }`} />
+                <View
+                  className={`w-5 h-5 rounded-full border-2 border-violet-400 ${
+                    selectedCard?._id.$oid === card._id.$oid
+                      ? "bg-violet-400"
+                      : "bg-transparent"
+                  }`}
+                />
               </View>
-            </Pressable>
+            </TouchableOpacity>
           ))}
         </View>
 
-        <Pressable
+        <TouchableOpacity
           className="bg-violet-500 p-4 rounded-lg mt-10 mb-8"
           onPress={handleAddSpend}
         >
-          <Text className="text-white text-center font-semibold">Add Spend</Text>
-        </Pressable>
+          <Text className="text-white text-center font-semibold">
+            Add Spend
+          </Text>
+        </TouchableOpacity>
       </ScrollView>
     </View>
-  )
+  );
 }
-

@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, ScrollView, Pressable } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { ChevronLeft } from "lucide-react-native";
 import { mockCards } from "../../mocks/data";
@@ -60,9 +60,9 @@ export default function TransactionDetailsScreen() {
   return (
     <ScrollView className="flex-1 bg-zinc-900 px-4">
       <View className="flex-row items-center py-4">
-        <Pressable onPress={() => router.back()}>
+        <TouchableOpacity onPress={() => router.back()}>
           <ChevronLeft size={24} color="white" />
-        </Pressable>
+        </TouchableOpacity>
         <Text className="text-white text-2xl font-semibold ml-4">
           {category} Transactions
         </Text>

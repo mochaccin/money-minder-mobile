@@ -35,6 +35,10 @@ export default function RootLayout() {
             name="(screens)/transaction-details"
             options={{ headerShown: false }}
           />
+          <Stack.Screen
+            name="(screens)/add-card"
+            options={{ headerShown: false }}
+          />
         </Stack>
       </View>
       <BottomNav />
