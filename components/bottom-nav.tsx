@@ -33,7 +33,7 @@ export default function BottomNav() {
   const pathname = usePathname()
 
   return (
-    <View className="flex-row items-center justify-between bg-[#2A2A2A] px-4 py-2 rounded-tl-3xl">
+    <View className="flex-row items-center justify-between bg-[#2A2A2A] px-4 py-2 rounded-t-3xl">
       <NavItem
         icon={<Home />}
         label="Home"
@@ -43,11 +43,11 @@ export default function BottomNav() {
       <NavItem
         icon={<Folder />}
         label="Account"
-        isActive={pathname === '/(screens)/account'}
+        isActive={pathname === '/account'}
         onPress={() => router.push('/(screens)/account')}
       />
       <Pressable 
-        onPress={() => router.push('/(screens)/add-spend')}
+        onPress={() => router.push('/add-spend')}
         className="bg-violet-400 rounded-2xl p-4 -mt-8"
       >
         <PlusCircle size={32} color="#000000" strokeWidth={2} />
@@ -55,13 +55,13 @@ export default function BottomNav() {
       <NavItem
         icon={<CreditCard />}
         label="Cards"
-        isActive={pathname === '/(screens)/cards'}
+        isActive={pathname === '/cards'}
         onPress={() => router.push('/(screens)/cards')}
       />
       <NavItem
         icon={<LineChart />}
         label="Stats"
-        isActive={pathname === '/(screens)/stats'}
+        isActive={pathname === '/stats'}
         onPress={() => router.push('/(screens)/stats')}
       />
     </View>

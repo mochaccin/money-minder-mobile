@@ -6,7 +6,7 @@ import "../global.css"
 
 export default function RootLayout() {
   return (
-    <SafeAreaView className="flex-1 bg-zinc-900">
+    <SafeAreaView className="flex-1 bg-[#111111]">
       <StatusBar barStyle="light-content" backgroundColor="#18181B" />
       <View className="flex-1">
         <Stack>

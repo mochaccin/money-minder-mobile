@@ -139,7 +139,7 @@ export default function AddSpendScreen() {
         </View>
 
         <Pressable
-          className="bg-violet-500 p-4 rounded-lg mt-8 mb-8"
+          className="bg-violet-500 p-4 rounded-lg mt-10 mb-8"
           onPress={handleAddSpend}
         >
           <Text className="text-white text-center font-semibold">Add Spend</Text>
