@@ -16,7 +16,17 @@ import {
   Trash,
 } from "lucide-react-native";
 import { Card, Spend } from "../../models/data";
-import { fetchCardDetails, fetchCardSpends } from "../../services/api";
+import {
+  deleteCard,
+  deleteSpend,
+  fetchCardDetails,
+  fetchCardSpends,
+  fetchUserData,
+  removeSpendFromCard,
+  removeSpendFromUser,
+  updateUserBalance,
+  userId,
+} from "../../services/api";
 
 const spendCategories = [
   { name: "Food", color: "#FF6384" },
@@ -55,9 +65,46 @@ export default function CardDetailsScreen() {
     }
   };
 
-  const handleDelete = () => {
-    // Implement delete functionality here
-    console.log("Delete button pressed");
+  const handleDelete = async () => {
+    if (!card) return;
+
+    try {
+      setLoading(true);
+
+      const user = await fetchUserData(userId);
+      const currentBalance = user.balance || 0;
+
+      const cardSpends = await fetchCardSpends(card.id);
+
+      const totalSpending = cardSpends.reduce(
+        (sum, spend) => sum + (spend.amount || 0),
+        0
+      );
+
+      const updatedBalance = currentBalance + totalSpending;
+
+      await updateUserBalance(userId, updatedBalance);
+
+      for (const spend of cardSpends) {
+        await removeSpendFromUser(spend.id!);
+        await removeSpendFromCard(card.id, spend.id!);
+        await deleteSpend(spend.id!);
+      }
+
+      await deleteCard(card.id);
+
+      alert(
+        `Card and associated spends deleted! Refunded $${totalSpending.toFixed(
+          2
+        )} to your balance. Your new balance is $${updatedBalance.toFixed(2)}.`
+      );
+      router.back();
+    } catch (error) {
+      console.error("Error deleting card and spends:", error);
+      alert("Failed to delete the card. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (loading) {

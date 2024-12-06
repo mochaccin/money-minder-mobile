@@ -166,11 +166,10 @@ export default function AccountScreen() {
           )}
         </View>
 
-        {/* Recent Transactions */}
         <View className="bg-zinc-800 rounded-xl p-4 mb-6">
           <Text className="text-white text-xl mb-4">Recent Transactions</Text>
           {spends && spends.length > 0 ? (
-            spends.slice(0, 5).map((spend, index) => {
+            spends.map((spend, index) => {
               const card = cards.find((c) => c.id === spend.payment_card);
 
               return (

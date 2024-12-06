@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Card, Spend, User } from '../models/data';
 
 
-export const userId = "67536c87e0fbc3bfe4f625c9"
+export const userId = "67533d546d8a2f335c74e6eb"
 const API_BASE_URL = 'http://192.168.100.2:3000/';
 
 const api = axios.create({
@@ -129,6 +129,45 @@ export const updateUserBalance = async (userId: string, newBalance: number): Pro
     await api.put(`/users/${userId}/balance`, { newBalance });
   } catch (error) {
     console.error('Error updating user balance:', error);
+    throw error;
+  }
+};
+
+export const removeSpendFromUser = async (spendId: string): Promise<void> => {
+  try {
+    await api.delete(`/users/${userId}/spends`, { data: { spendId } });
+  } catch (error) {
+    console.error(`Error removing spend ${spendId} from user:`, error);
+    throw error;
+  }
+};
+
+export const removeSpendFromCard = async (
+  cardId: string,
+  spendId: string
+): Promise<void> => {
+  try {
+    await api.delete(`/cards/${cardId}/spends`, { data: { spendId } });
+  } catch (error) {
+    console.error(`Error removing spend ${spendId} from card ${cardId}:`, error);
+    throw error;
+  }
+};
+
+export const deleteSpend = async (spendId: string): Promise<void> => {
+  try {
+    await api.delete(`/spends/${spendId}`);
+  } catch (error) {
+    console.error(`Error deleting spend ${spendId}:`, error);
+    throw error;
+  }
+};
+
+export const deleteCard = async (cardId: string): Promise<void> => {
+  try {
+    await api.delete(`/cards/${cardId}`);
+  } catch (error) {
+    console.error(`Error deleting card ${cardId}:`, error);
     throw error;
   }
 };
