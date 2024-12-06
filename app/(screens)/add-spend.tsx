@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -6,22 +6,25 @@ import {
   ScrollView,
   Alert,
   TouchableOpacity,
+  ActivityIndicator,
+  Image,
 } from "react-native";
 import { CreditCard, DollarSign } from "lucide-react-native";
 import { useRouter } from "expo-router";
 import { Picker } from "@react-native-picker/picker";
-import { mockCards, Card, Spend } from "../../models/data";
+import { Card, Spend } from "../../models/data";
+import { format } from "date-fns";
+import {
+  fetchCards,
+  createSpend,
+  addSpendToUser,
+  addSpendToCard,
+  userId,
+  updateUserBalance,
+  fetchUserData,
+} from "../../services/api";
 
-const categories = [
-  "Home Bills",
-  "Food",
-  "Games",
-  "Transportation",
-  "Entertainment",
-  "Shopping",
-  "Healthcare",
-  "Education",
-];
+const categories = ["Food", "Transport", "Entertainment", "Shopping", "Others"];
 
 export default function AddSpendScreen() {
   const router = useRouter();
@@ -29,6 +32,25 @@ export default function AddSpendScreen() {
   const [amount, setAmount] = useState("");
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [category, setCategory] = useState(categories[0]);
+  const [cards, setCards] = useState<Card[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    loadCards();
+  }, []);
+
+  const loadCards = async () => {
+    try {
+      setLoading(true);
+      const fetchedCards = await fetchCards();
+      setCards(fetchedCards);
+    } catch (err) {
+      setError("Failed to load cards. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const formatAmount = (value: string) => {
     const numeric = value.replace(/[^0-9]/g, "");
@@ -43,25 +65,95 @@ export default function AddSpendScreen() {
     setAmount(value.replace(/[^0-9]/g, ""));
   };
 
-  const handleAddSpend = () => {
+  const handleAddSpend = async () => {
     if (!name || !amount || !selectedCard) {
       Alert.alert("Error", "Please fill in all fields");
       return;
     }
 
-    const newSpend: Spend = {
-      name,
-      date: new Date().toLocaleDateString("es-CL"),
-      category,
-      amount: Number(amount),
-      owner: { $oid: "66b6f687ba562c138887ac1c" },
-      payment_card: selectedCard._id,
-    };
+    setLoading(true);
+    setError(null);
 
-    console.log("New spend:", newSpend);
-    Alert.alert("Success", "Spend added successfully");
-    router.back();
+    try {
+      const newSpend: Omit<Spend, "id"> = {
+        name,
+        date: format(new Date(), "dd-MM-yy"),
+        category,
+        amount: Number(amount),
+        owner: userId,
+        payment_card: selectedCard.id!,
+      };
+
+      const spendId = await createSpend(newSpend);
+
+      await Promise.all([
+        addSpendToUser(userId, spendId),
+        addSpendToCard(selectedCard.id!, spendId),
+      ]);
+
+      const userData = await fetchUserData(userId);
+      const currentBalance = userData.balance;
+
+      const newBalance = currentBalance - Number(amount);
+
+      await updateUserBalance(userId, newBalance);
+
+      Alert.alert("Success", "Spend added and balance updated successfully");
+      router.back();
+    } catch (err) {
+      setError("Failed to add spend. Please try again.");
+      Alert.alert("Error", "Failed to add spend. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
+
+  if (loading) {
+    return (
+      <View className="flex-1 bg-[#111111] justify-center items-center">
+        <ActivityIndicator size="large" color="#A78BFA" />
+      </View>
+    );
+  }
+
+  if (!cards || cards.length === 0) {
+    return (
+      <View className="flex-1 bg-[#111111] px-4">
+        <View className="flex-row justify-between items-center py-4">
+          <Text className="text-white text-2xl font-semibold">
+            No cards available
+          </Text>
+          <View className="w-8 h-8 rounded-full bg-violet-500 items-center justify-center">
+            <Text className="text-white text-sm font-medium">N</Text>
+          </View>
+        </View>
+
+        <View className="flex-1 items-center justify-center -mt-20">
+          <Image
+            source={{
+              uri: "https://static-cdn.jtvnw.net/jtv_user_pictures/44daa95b-1b87-468c-acb9-9807af63393b-profile_image-300x300.png",
+            }}
+            className="w-60 h-60"
+            resizeMode="contain"
+          />
+          <Text className="text-white text-2xl font-bold mt-4 mb-2">
+            You don't have any cards
+          </Text>
+          <Text className="text-gray-400 text-center mb-8 px-6">
+            You need to create a card before being able to register spends.
+          </Text>
+          <TouchableOpacity
+            className="bg-violet-500 rounded-xl py-4 px-8"
+            onPress={() => router.push("/add-card")}
+          >
+            <Text className="text-white font-semibold text-lg flex-row items-center">
+              + Add a card
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View className="flex-1 bg-[#111111]">
@@ -120,30 +212,32 @@ export default function AddSpendScreen() {
         </View>
 
         <View className="space-y-4 flex flex-col gap-4">
-          {mockCards.map((card) => (
+          {cards.map((card) => (
             <TouchableOpacity
-              key={card._id.$oid}
-              className={`flex-row items-center justify-between p-4 rounded-lg ${
-                selectedCard?._id.$oid === card._id.$oid
+              key={card.id}
+              className={`flex-row items-center justify-between p-6 rounded-lg ${
+                selectedCard?.id === card.id
                   ? "bg-violet-500/20"
                   : "bg-zinc-800"
               }`}
               onPress={() => setSelectedCard(card)}
             >
               <View className="flex-row items-center">
-                <Text className="text-violet-400 mr-2">{card.card_name}</Text>
+                <Text className="text-violet-400 mr-2 text-xl">
+                  {card.card_name}
+                </Text>
                 <CreditCard
-                  size={20}
+                  size={24}
                   color={card.card_type ? "#fff" : "#fff"}
                 />
               </View>
               <View className="flex-row items-center">
-                <Text className="text-white mr-4">
+                <Text className="text-white mr-4 text-lg">
                   **** **** **** {card.card_number.slice(-4)}
                 </Text>
                 <View
                   className={`w-5 h-5 rounded-full border-2 border-violet-400 ${
-                    selectedCard?._id.$oid === card._id.$oid
+                    selectedCard?.id === card.id
                       ? "bg-violet-400"
                       : "bg-transparent"
                   }`}
@@ -156,9 +250,10 @@ export default function AddSpendScreen() {
         <TouchableOpacity
           className="bg-violet-500 p-4 rounded-lg mt-10 mb-8"
           onPress={handleAddSpend}
+          disabled={loading}
         >
           <Text className="text-white text-center font-semibold">
-            Add Spend
+            {loading ? "Adding Spend..." : "Add Spend"}
           </Text>
         </TouchableOpacity>
       </ScrollView>

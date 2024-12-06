@@ -1,31 +1,30 @@
-export interface User {
-  name: string;
-  password: string;
-  cards?: string[];
-  spends?: string[];
-}
-
-export interface Spend {
-  id?: string;  
-  name: string;
-  date: string;
-  category: string;
-  amount: number; 
-  owner: string; 
-  paymentCard: string;  
-}
-
 export interface Card {
   id?: string;
   owner: string;
-  cardName: string;
-  cardType: boolean;
-  cardNumber: string;
-  cardExpirationDate: string;
-  cardCVV: string;
-  spends?: string[];
+  card_name: string;
+  card_type: boolean;
+  card_number: string;
+  card_expiration_date: string;
+  card_cvv: string;
+  spends?: Spend[];
 }
 
+export interface Spend {
+  id?: string;
+  name: string;
+  date: string;
+  category: string;
+  amount: number;
+  owner: string;
+  payment_card: string;
+}
+
+export interface User {
+  name: string;
+  password: string;
+  cards?: Spend[];
+  spends?: Spend[];
+}
 
 export interface MockSpend {
   name: string;

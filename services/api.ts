@@ -1,8 +1,8 @@
 import axios from 'axios';
-import { Card } from '../models/data';
+import { Card, Spend, User } from '../models/data';
 
 
-const userId = "6752261b020cfec6c361f005"
+export const userId = "67536c87e0fbc3bfe4f625c9"
 const API_BASE_URL = 'http://192.168.100.2:3000/';
 
 const api = axios.create({
@@ -56,3 +56,79 @@ export const fetchCardDetails = async (cardId: string): Promise<Card> => {
   }
 };
 
+export const fetchUserSpends = async (userId: string): Promise<Spend[]> => {
+  try {
+    const response = await api.get<Spend[]>(`/users/${userId}/spends`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching user spends:', error);
+    throw error;
+  }
+};
+
+export const fetchCardSpends = async (cardId: string): Promise<Spend[]> => {
+  try {
+    const response = await api.get<Spend[]>(`/cards/${cardId}/spends`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching card spends:', error);
+    throw error;
+  }
+};
+
+export const addSpend = async (spendData: Omit<Spend, 'id'>): Promise<Spend> => {
+  try {
+    const response = await api.post<Spend>('/spends', spendData);
+    return response.data;
+  } catch (error) {
+    console.error('Error adding spend:', error);
+    throw error;
+  }
+};
+
+export const createSpend = async (spendData: Omit<Spend, 'id'>): Promise<string> => {
+  try {
+    const response = await api.post<{ InsertedID: string }>('/spends', spendData);
+    return response.data.InsertedID;
+  } catch (error) {
+    console.error('Error creating spend:', error);
+    throw error;
+  }
+};
+
+export const addSpendToUser = async (userId: string, spendId: string): Promise<void> => {
+  try {
+    await api.post(`/users/${userId}/spends`, { spendId });
+  } catch (error) {
+    console.error('Error adding spend to user:', error);
+    throw error;
+  }
+};
+
+export const addSpendToCard = async (cardId: string, spendId: string): Promise<void> => {
+  try {
+    await api.post(`/cards/${cardId}/spends`, { spendId });
+  } catch (error) {
+    console.error('Error adding spend to card:', error);
+    throw error;
+  }
+};
+
+export const fetchUserData = async (userId: string): Promise<User> => {
+  try {
+    const response = await api.get<User>(`/users/${userId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    throw error;
+  }
+};
+
+export const updateUserBalance = async (userId: string, newBalance: number): Promise<void> => {
+  try {
+    await api.put(`/users/${userId}/balance`, { newBalance });
+  } catch (error) {
+    console.error('Error updating user balance:', error);
+    throw error;
+  }
+};

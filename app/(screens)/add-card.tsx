@@ -11,14 +11,14 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { ChevronLeft } from "lucide-react-native";
-import { addCard, addCardToUser } from "../../services/api";
+import { addCard, userId } from "../../services/api";
 
 export default function AddCardScreen() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [cardData, setCardData] = useState({
     card_name: "",
-    owner: "6752261b020cfec6c361f005",
+    owner: userId,
     card_type: true,
     card_number: "",
     card_expiration_date: "",
