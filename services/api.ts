@@ -154,6 +154,16 @@ export const removeSpendFromCard = async (
   }
 };
 
+export const removeCardFromUser = async (cardId: string): Promise<void> => {
+  try {
+    await api.delete(`/users/${userId}/cards`, { data: { cardId } });
+  } catch (error) {
+    console.error(`Error removing card ${cardId} from user's cards array:`, error);
+    throw error;
+  }
+};
+
+
 export const deleteSpend = async (spendId: string): Promise<void> => {
   try {
     await api.delete(`/spends/${spendId}`);

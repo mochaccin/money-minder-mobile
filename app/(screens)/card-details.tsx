@@ -22,6 +22,7 @@ import {
   fetchCardDetails,
   fetchCardSpends,
   fetchUserData,
+  removeCardFromUser,
   removeSpendFromCard,
   removeSpendFromUser,
   updateUserBalance,
@@ -91,6 +92,7 @@ export default function CardDetailsScreen() {
         await deleteSpend(spend.id!);
       }
 
+      await removeCardFromUser(card.id);
       await deleteCard(card.id);
 
       alert(
